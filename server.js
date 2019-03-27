@@ -29,6 +29,13 @@ Queue.prototype.size = function() {
 Queue.prototype.first = function() {
     return this.data[0];
 }
+Queue.prototype.delete = function(playerid) {
+    for (var i in this.data ) {
+        if (playerid.id === this.data[i].id) {
+            this.data.splice(i,1)
+        }
+    }
+}
 const turns = new Queue();
 
 function shuffle(array) {
@@ -43,6 +50,13 @@ function shuffle(array) {
 }
 
 function turnManager(whosTurn){
+    for (i in players) {
+        if (players[i].id === whosTurn.id) {
+            players[i].isTurn = true;
+        } else {
+            players[i].isTurn = false;
+        }
+    }
     io.emit('turnupdate', whosTurn)
 }
 
@@ -51,7 +65,14 @@ shuffle(deck)
 function getDeck() {
     let hand = [{id: 100, name: 'Defuse', rules: 'Negate Bomb', url: ''}];
     for (let i = 0; i < 7; i++) {
-        hand.push(deck.pop())
+        card = deck.pop()
+        if(card.id === 200) {
+            temp = card
+            card = deck.pop()
+            deck.push(temp)
+            shuffle(deck)
+        }
+        hand.push(card)
     }
     return hand
 }
@@ -71,38 +92,52 @@ io.on('connection', function (socket) { //2
     socket.emit('new_user',player);
     
     io.emit('senddecktoall', deck);
-    
-    socket.broadcast.emit('all_players', players)
-    socket.emit('all_players', players)
-    
+
+    socket.broadcast.emit('playerjoin', players)
+    socket.emit('allplayers', players)
     
     socket.on('updatedeck', function(data) {
         io.emit('senddecktoall', data);
     })
     
+    socket.on('playerdead', function(data) {
+        turns.delete(players[data])
+        console.log("turns")
+        console.log(turns)
+    })
+
     socket.on('drewcard', function(data){
-        console.log("turns before", turns)
+        if(turns.size() === 1) {
+            console.log('someone has won')
+            return
+        }
+        // console.log("turns before", turns)
         turns.add(turns.remove())
-        console.log("turns after", turns)
+        // console.log("turns after", turns)
         whosTurn = turns.first()
         turnManager(whosTurn)
+        socket.emit('allplayers', players)
     })
     
     turns.add(player)
-    if(turns.size() === 1) {
+    if(turns.size() === 2) {
         whosTurn = turns.first();
         turnManager(whosTurn)
     }
     socket.on("discard", discard => {
         discardCard = discard;
-        console.log("recieved discrad on server", discardCard)
+        // console.log("recieved discrad on server", discardCard)
         io.emit("updateddiscard", discardCard);
+        socket.emit('allplayers', players)
+
     })
-    console.log("players in lobby", turns.size())
 
     socket.on('disconnect', function(){
         // console.log("deleted user", players[socket.id])
-        delete players[socket.id] 
+        turns.delete(players[socket.id])
+        delete players[socket.id]
+        socket.broadcast.emit('deletedplayers', players)
+
     })
 
     // socket.on('moved_player', function(data){
