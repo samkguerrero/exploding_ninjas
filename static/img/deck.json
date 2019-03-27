@@ -1,0 +1,326 @@
+[
+    {
+        "id": 1,
+        "name": "Beard Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 2,
+        "name": "Beard Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 3,
+        "name": "Beard Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 4,
+        "name": "Beard Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 5,
+        "name": "Taco Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 6,
+        "name": "Taco Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 7,
+        "name": "Taco Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 8,
+        "name": "Taco Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 9,
+        "name": "Cattermelon",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 10,
+        "name": "Cattermelon",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 11,
+        "name": "Cattermelon",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 12,
+        "name": "Cattermelon",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 13,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 14,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 15,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 16,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 17,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 18,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 19,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 20,
+        "name": "Rainbow-Ralphing Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 21,
+        "name": "Hairy Potato Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 22,
+        "name": "Hairy Potato Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 23,
+        "name": "Hairy Potato Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 24,
+        "name": "Hairy Potato Cat",
+        "rules": "This is a cat card and is powerless on its own. Play two of this cat as a pair to steal a random card from another player",
+        "url": ""
+    },
+    {
+        "id": 25,
+        "name": "Nope",
+        "rules": "Stop the action of anohter player. You can play this at any time",
+        "url": ""
+    },
+    {
+        "id": 26,
+        "name": "Nope",
+        "rules": "Stop the action of anohter player. You can play this at any time",
+        "url": ""
+    },
+    {
+        "id": 27,
+        "name": "Nope",
+        "rules": "Stop the action of anohter player. You can play this at any time",
+        "url": ""
+    },
+    {
+        "id": 28,
+        "name": "Nope",
+        "rules": "Stop the action of anohter player. You can play this at any time",
+        "url": ""
+    },
+    {
+        "id": 29,
+        "name": "Nope",
+        "rules": "Stop the action of anohter player. You can play this at any time",
+        "url": ""
+    },
+    {
+        "id": 30,
+        "name": "Attack",
+        "rules": "End your turn without drawing a card. Force the next player to take two turns",
+        "url": ""
+    },
+    {
+        "id": 31,
+        "name": "Attack",
+        "rules": "End your turn without drawing a card. Force the next player to take two turns",
+        "url": ""
+    },
+    {
+        "id": 32,
+        "name": "Attack",
+        "rules": "End your turn without drawing a card. Force the next player to take two turns",
+        "url": ""
+    },
+    {
+        "id": 33,
+        "name": "Attack",
+        "rules": "End your turn without drawing a card. Force the next player to take two turns",
+        "url": ""
+    },
+    {
+        "id": 34,
+        "name": "See the future",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 35,
+        "name": "See the future",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 36,
+        "name": "See the future",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 37,
+        "name": "See the future",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 38,
+        "name": "See the future",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 39,
+        "name": "Shuffle the draw",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 40,
+        "name": "Shuffle the draw",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 41,
+        "name": "Shuffle the draw",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 42,
+        "name": "Shuffle the draw",
+        "rules": "Privately view the top three cards of the draw pile",
+        "url": ""
+    },
+    {
+        "id": 43,
+        "name": "Skip",
+        "rules": "end your turn without drawing a card",
+        "url": ""
+    },
+    {
+        "id": 44,
+        "name": "Skip",
+        "rules": "end your turn without drawing a card",
+        "url": ""
+    },
+    {
+        "id": 45,
+        "name": "Skip",
+        "rules": "end your turn without drawing a card",
+        "url": ""
+    },
+    {
+        "id": 46,
+        "name": "Skip",
+        "rules": "end your turn without drawing a card",
+        "url": ""
+    },
+    {
+        "id": 47,
+        "name": "Favor",
+        "rules": "One player must give you a card of thier choice",
+        "url": ""
+    },
+    {
+        "id": 48,
+        "name": "Favor",
+        "rules": "One player must give you a card of thier choice",
+        "url": ""
+    },
+    {
+        "id": 49,
+        "name": "Favor",
+        "rules": "One player must give you a card of thier choice",
+        "url": ""
+    },
+    {
+        "id": 50,
+        "name": "Favor",
+        "rules": "One player must give you a card of thier choice",
+        "url": ""
+    },
+    {
+        "id": 51,
+        "name": "Exploding Ninja",
+        "rules": "Reveal Card",
+        "url": ""
+    },
+    {
+        "id": 52,
+        "name": "Exploding Ninja",
+        "rules": "Reveal Card",
+        "url": ""
+    },
+    {
+        "id": 53,
+        "name": "Exploding Ninja",
+        "rules": "Reveal Card",
+        "url": ""
+    },
+    {
+        "id": 54,
+        "name": "Exploding Ninja",
+        "rules": "Reveal Card",
+        "url": ""
+    }
+]

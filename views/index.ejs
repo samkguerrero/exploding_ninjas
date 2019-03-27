@@ -3,114 +3,71 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Survey Form</title>
+    <title>Exploding Ninjas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
 
-        * {
-            margin: 0px;
-            padding: 0px;
-            font-size: 0px;
-        }
-    
-        body {
-            background-color: black;
-            min-width: 1400px;
-        }
-    
-        div.row {
-            margin: -5px;
-        }
-    
-        div.row div {
-            width: 50px;
-            height: 50px;
-            display: inline-block;
-        }
-    
-        div.brick {
-            background-color: #06a9e4;
-        }
-    
-        div.coin {
-            background-image: url("img/weeds.jpg");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 150px;
-        }
-    
-        div.cherry {
-            background-image: url("img/weed.gif");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 90px;
-        }
-    
-        div#ghost {
-            background-image: url("img/ghost.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 30px;
-            height: 50px;
-            width: 50px;
+        #hand {
             position: absolute;
-        }
-    
-        div.ghost {
-            background-image: url("img/ghost.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 30px;
-        }
-    
-        div.player {
-            background-image: url("img/down1.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 40px;
-            height: 50px;
-            width: 50px;
-            position: absolute;
+            bottom: 0;
+            margin: 0px auto;
+            width: 1100px;
+            border: 2px solid black;
+            /* display: block; */
         }
 
-        #container {
-            position:absolute;
+        .card {
+            height: 125px;
+            width: 100px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
+            display:inline-block;
+            vertical-align: top;
+            margin-right: 10px;
+            padding: 10px;
+            z-index: 1000;
         }
-    
-        div#score {
-            border : 1px solid #fff;
-            width: 30px;
-            height: 30px;
-            color: #fff;
-            text-align: center;
-            padding: 7px;
+
+        #deck {
+            height: 150px;
+            width: 115px;
+            border: 2px solid black;
+            box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
+            border-radius: 15px;
+            display:inline-block;
+            padding: 10px;
             position: absolute;
-            top: 10px;
-            left: 1080px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-100%,-50%);
         }
-    
-        div#lives {
-            border : 1px solid pink;
-            width: 30px;
-            height: 30px;
-            color: pink;
-            text-align: center;
-            padding: 7px;
+        #discard {
+            height: 150px;
+            width: 115px;
+            border: 2px solid black;
+            box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
+            border-radius: 15px;
+            display:inline-block;
+            padding: 10px;
             position: absolute;
-            top: 60px;
-            left: 1080px;
+            top: 50%;
+            left: 50%;
+            transform: translate(45%,-50%);
         }
+
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 
 <body>
 
-<div id="container">
-    <div id="world"></div>
-    <!-- <div id="player"></div> -->
+<div id="deck">
+    <p id="deckLength">cards left 0</p>
 </div>
+<div id="discard">
+    <p id="deckLength">No cards Here</p>
+</div>
+<div id="hand"></div>
 
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script>
@@ -122,154 +79,81 @@
         var local_players = {};
 
         var my_id;
+        var hand;
+        var deck;
+        var discard;
+        var isTurn = false;
 
         socket.on('new_user', function(data){
-            // console.log("new id", data.id)
-            // console.log("new id", data)
             my_id = data.id
+            hand = data.hand
+            render_hand(hand)
         })
 
-        socket.on('all_players', function(data){
-            console.log("old players")
-            console.log(local_players)
-            console.log("start looping throu new data")
-            for (var n in data) {
-                console.log("looking in data for new")
-                console.log(n)
-                console.log(data[n])
-                if (local_players.hasOwnProperty(n)) {
-                    console.log("it is")
-                } else {
-                    console.log("it is not")
-                    render_player(data[n])
-                }
+        socket.on('senddecktoall', function(data){
+            deck = data
+            $('#deckLength').html('cards left ' + deck.length);
+        })
+
+        socket.on('turnupdate', function(data){
+            console.log("turnupdateon", data)
+            if (my_id === data.id) {
+                isTurn = true
             }
-            local_players = data;
-            // console.log("local players after update")
-            // console.log(local_players)
-            for (var i in local_players) {
-                display_player(local_players[i])
-            }
+            console.log("clients istrue", isTurn)
+        })
+        socket.on("updateddiscard", data => {
+            discard = data;
+            console.log("discraded card",discard);
+            $('#discard').empty();
+            $('#discard').append('<div class="card" id="'+ discard.id +'">' + discard.name + '</div>');
         })
 
         socket.on('disconnect', function(data){
-            // console.log("ALL PLAYERS", data)
             local_players = data.players;
-            deleted_user_div = document.getElementById(String(data.deleted_user.id))
-            document.getElementById(String(data.deleted_user.id)).remove();
         })
 
-        socket.on('updated_positions', function(data){
-            local_players = data
-            // console.log("ALL NEEEWWWWW", local_players)
-            // console.log(data)
-            for (var i in local_players) {
-                display_player(local_players[i])
+        function render_hand(hand) {
+            for (var i = 0; i < hand.length; i++) {
+                $('#hand').append('<div class="card" id="'+ hand[i].id +'">' + hand[i].name + '</div>')
+            }
+        }
+
+        $('#deck').click(function(){
+            if (isTurn) {
+                hand.push(deck.pop())
+                $('#hand').append('<div class="card" id="'+ hand[hand.length-1].id +'">' + hand[hand.length-1].name + '</div>')
+                socket.emit("drewcard", my_id)
+                socket.emit("updatedeck", deck)
+                isTurn = false;
+            } else {
+                console.log("not your turn")
             }
         })
 
-        function render_player(player_object) {
-            $('#container').append('<div class="player" id="' + player_object.id + '"></div>')
-        }
-
-        function display_player(player_object) {
-            // console.log("player ob x", player_object.x)
-            // console.log("player ob y", player_object.y)
-            document.getElementById(player_object.id).style.top = player_object.y*50 + "px";
-            document.getElementById(player_object.id).style.left = player_object.x*50 + "px";
-        }
-
-        //OLD
-
-        var world = [
-            [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
-            [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
-        ]
-
-        // var chance = 0;
-        // for (var x = 1; x < world.length-1; x++) {
-        //     for (var y = 1; y < world[x].length - 1; y++) {
-        //         chance = Math.floor(Math.random() * 11);
-        //         if(chance > 9)
-        //             world[x][y] = Math.floor(Math.random() * (3 - 2 + 1)) + 2;
-        //         else if(chance > 1)
-        //             world[x][y] = Math.floor(Math.random() * 1);
-        //     }
-        // }
-
-        function displayWorld() {
-            var output = '';
-
-            for (var i=0; i<world.length; i++) {
-                output += "<div class='row'>";
-                for(var j=0; j<world[i].length; j++) {
-                    if (world[i][j] == 2) {
-                        output += "<div class='brick'></div>";
-                    } else if (world[i][j] == 1) {
-                        output += "<div class='coin'></div>";
-                    } else if (world[i][j] == 0) {
-                        output += "<div class='empty'></div>";
-                    } else if (world[i][j] == 3) {
-                        output += "<div class='cherry'></div>";
-                    } else if (world[i][j] == 4) {
-                        output += "<div class='ghost'></div>";
+        $('#hand').on("click", ".card", function(e){
+            if (isTurn) {
+                console.log("hand before ",hand);
+                for(let i = 0; i <= hand.length; i++){
+                    console.log("hand id",hand[i].id);
+                    console.log("clicked card",e.target.id);
+                    if(hand[i].id === parseInt(e.target.id)){
+                        socket.emit("discard", hand[i]);
+                        hand.splice(i,1);
+                        $("#hand").empty();
+                        render_hand(hand);
+                        console.log("hand after ",hand);
+                        break;
+                        
                     }
-                }
-                output += "</div>";
-            }
-            document.getElementById('world').innerHTML = output;
-        };
+                } 
 
-        displayWorld();
-
-        var walkValue = 1;
-        document.onkeydown = function(e) {
-            if (walkValue == 1){
-                walkValue = 2;
+            } else {
+                console.log("calm down not ur turn");
             }
-            else if (walkValue == 2){
-                walkValue = 1;
-            }
-            if (e.keyCode == 37 && world[local_players[my_id].y][local_players[my_id].x -1] != 2) {
-                local_players[my_id].x --;
-                document.getElementById(my_id).style.backgroundImage = "url('img/left"+walkValue+".png')";
-            } else if (e.keyCode ==39 && world[local_players[my_id].y][local_players[my_id].x +1] != 2) {
-                local_players[my_id].x ++;
-                document.getElementById(my_id).style.backgroundImage = "url('img/right"+walkValue+".png')";
-            } else if (e.keyCode == 38 && world[local_players[my_id].y-1][local_players[my_id].x ] != 2) {
-                local_players[my_id].y --;
-                document.getElementById(my_id).style.backgroundImage = "url('img/top"+walkValue+".png')";
-            } else if (e.keyCode == 40 && world[local_players[my_id].y+1][local_players[my_id].x ] != 2) {
-                local_players[my_id].y ++;
-                document.getElementById(my_id).style.backgroundImage = "url('img/down"+walkValue+".png')";
-            }
-
-            if(world[local_players[my_id].y][local_players[my_id].x] == 1) {
-                world[local_players[my_id].y][local_players[my_id].x] = 0;
-                displayWorld();
-            } else if (world[local_players[my_id].y][local_players[my_id].x] == 3) {
-                world[local_players[my_id].y][local_players[my_id].x] = 0;
-                displayWorld();
-            } else if (world[local_players[my_id].y][local_players[my_id].x] == 4) {
-                world[local_players[my_id].y][local_players[my_id].x] = 0;
-                displayWorld();
-            }
-            console.log("X", local_players[my_id].x)
-            console.log("Y", local_players[my_id].y)
-            socket.emit('moved_player', local_players)
-        }
-
+        })
     });
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>
