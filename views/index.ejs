@@ -6,98 +6,45 @@
     <title>Exploding Ninjas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <style>
-        #hand {
-            position: absolute;
-            bottom: 0;
-            margin: 0px auto;
-            width: 1100px;
-            border: 2px solid black;
-        }
-
-        .card {
-            height: 125px;
-            width: 100px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
-            display: inline-block;
-            vertical-align: top;
-            margin-right: 10px;
-            padding: 10px;
-            z-index: 1000;
-        }
-
-        #deck {
-            height: 150px;
-            width: 115px;
-            border: 2px solid black;
-            box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
-            border-radius: 15px;
-            display: inline-block;
-            padding: 10px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-100%, -50%);
-        }
-
-        #discard {
-            height: 150px;
-            width: 115px;
-            border: 2px solid black;
-            box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
-            border-radius: 15px;
-            display: inline-block;
-            padding: 10px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(45%, -50%);
-        }
-
-        .aplayer {
-            display: inline-block;
-            margin-right: 25px;
-            border: 1px solid black;
-        }
-
-        .cardholder {
-            border: 1px solid black;
-        }
-
-        .playerscard {
-            border: 1px solid black;
-            width: 20px;
-            height: 50px;
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        #mystats {
-            margin-top: 20%;
-            position: absolute;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <link href="/css/styles.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 
-    <!-- <div id="players"></div> -->
+    <button id="resetGame">Reset Game</button>
 
-    <div id="deck">
-        <p id="deckLength">cards left 0</p>
+    <div id="players"></div>
+    
+    <div class="packs">
+        <div id="deck" class="packs__deck">
+            <p id="deckLength" class="text-center">Cards Left 0</p>
+        </div>
+        <div id="discard" class="packs__discard discard">
+            <p id="deckLength" class="text-center">No Cards Here</p>
+        </div>
     </div>
-    <div id="discard">
-        <p id="deckLength">No cards Here</p>
+    
+    <div id="howManyDown">
+        <p>How many cards down to place the bomb?</p>
+        <input min="0" max="40" type="number" id="valHowManyDown"></input>
+        <button id="subHowManyDown">Put card back in deck</button>
     </div>
-
+    
     <div id="hand">
     </div>
-
-    <!-- <div id="mystats">
-    <p id="myid"></p>
-    <p id="ismyturn"></p>
-</div> -->
+    
+    <div id="myStats">
+        <p id="myName"></p>
+        <p id="isMyTurn"></p>
+    </div>
+    
+    <label id="nameInputLabel" for="name">Enter your name:</label>
+    <input id="nameInput" type="text" name="name">
+    <button id="joinButton">Join</button>
+    <button id="startGame" disabled>0/2 Start Game</button>
+    
+    <div id="playerLobby"></div>
 
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script  type="text/javascript" src="/js/scripts.js"></script>

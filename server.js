@@ -1,13 +1,14 @@
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+server.listen(1337)
 var express = require("express");
 var path = require("path");
 app.use(express.static(path.join(__dirname, "./static")));
-server.listen(1337)
+var Masterdeck = require('./static/img/deck.json');
 
 var players = {};
-var deck = require('./static/img/deck.json');
+var deck;
 var whosTurn;
 var discardCard = {id: -1, name: "False"};
 
@@ -46,7 +47,16 @@ function shuffle(array) {
     return array;
 }
 
-function turnManager(whosTurn) {
+function getHandFromDeck() {
+    let hand = [{id: 100, name: 'Defuse', rules: 'Negate Bomb', url: "./img/samuraiGreen.png"}];
+    for (let i = 0; i < 7; i++) {
+        hand.push(deck.pop())
+    }
+    return hand.sort( () => Math.random() - 0.5);
+}
+
+function turnManager(whosTurn){
+    //update server players
     for (i in players) {
         if (players[i].id === whosTurn.id) {
             players[i].isTurn = true;
@@ -54,80 +64,107 @@ function turnManager(whosTurn) {
             players[i].isTurn = false;
         }
     }
-    io.emit('turnupdate', whosTurn)
+    io.emit('turnUpdate', whosTurn);
+    io.emit('updatePlayers', players);
     io.emit("updateddiscard", discardCard);
 }
 
-shuffle(deck)
+io.on('connection', function (socket) {
 
-function getDeck() {
-    let hand = [{ id: 100, name: 'Defuse', rules: 'Negate Bomb', url: '' }];
-    for (let i = 0; i < 7; i++) {
-        card = deck.pop()
-        if (card.id === 200) {
-            temp = card
-            card = deck.pop()
-            deck.push(temp)
-            shuffle(deck)
+    socket.on('playerJoined', function(playerNewName){
+        player = {
+            id: socket.id,
+            name: playerNewName,
+            hand: [],
+            isTurn: false,
+            isDead: false
         }
-        hand.push(card)
-    }
-    return hand
-}
-
-io.on('connection', function (socket) { //2
-    //PLAYING MAYBE NEEDS TO BE DELETED
-    shuffle(deck)
-
-    player = {
-        id: socket.id,
-        name: 'sam',
-        hand: getDeck(),
-        isTurn: false,
-        isDead: false
-    }
-
-    players[socket.id] = player;
-
-    socket.emit('new_user', player);
-
-    io.emit('senddecktoall', deck);
-
-    socket.broadcast.emit('playerjoin', players)
-    socket.emit('allplayers', players)
-
-    socket.on('updatedeck', function (data) {
-        io.emit('senddecktoall', data);
+        players[socket.id] = player;
+        turns.add(player)
+        socket.broadcast.emit('joinedLobby', players)
+        socket.emit('joinedLobby', players)
+        socket.emit('playerInfo', player)
     })
 
-    socket.on('playerdead', function (data) {
+    socket.on('disconnect', function(){
+        turns.delete(players[socket.id])
+        delete players[socket.id]
+        io.emit('deletedPlayer', socket.id)
+    })
+
+    socket.on('startGame', function(data){
+        for (var i in players) {
+            players[i].hand = []
+        }
+        deck = [];
+        for (i in Masterdeck) {
+            deck.push(Masterdeck[i])
+        }
+        shuffle(deck)
+        for (var i in players) {
+            players[i].hand = getHandFromDeck()
+        }
+        var explodingNinja = {"id": 200, "name": "Exploding Ninja","rules": "Reveal Card","url": ""}
+        // var playersMinus1 = turns.size()-1
+        var playersMinus1 = 4
+        for (var i = 0; i < playersMinus1; i++) {
+            deck.push(explodingNinja)
+        }
+        shuffle(deck)
+        whosTurn = turns.first();
+        turnManager(whosTurn)
+        gameBoardStart = {
+            players: players,
+            deck: deck
+        }
+        io.emit('serverStartingGame', gameBoardStart )
+    })
+        
+    socket.on('updateDeck', function(data) {
+        io.emit('sendDeckTotal', data);
+    })
+    
+    socket.on('playerDead', function(data) {
         turns.delete(players[data])
+        delete players[socket.id]
         console.log("turns")
         console.log(turns)
     })
+    socket.on('updatePlayerWhoDrew', function(data) {
+        players[data.player].hand.push(data.card)
+        io.emit('updatePlayers', players);
+    })
 
-    socket.on('drewcard', function (data) {
-        if (turns.size() === 1) {
+    socket.on('turnEnded', function(data){
+        if(turns.size() === 1) {
             console.log('someone has won')
+            socket.emit('someoneWon')
             return
         }
         turns.add(turns.remove())
         whosTurn = turns.first()
         turnManager(whosTurn)
-        socket.emit('allplayers', players)
     })
 
-    turns.add(player)
-    if (turns.size() === 2) {
-        console.log(turns.size());
-        whosTurn = turns.first();
-        turnManager(whosTurn)
-    }
+    socket.on('newLocationForExplode',function(howManyDown){
+        io.emit('addExplosion',howManyDown);
+        socket.emit('addExplosion',howManyDown);
+    })
+    
     socket.on("discard", discard => {
-        discardCard = discard;
-        io.emit("updateddiscard", discardCard);
-
+        discardCard = discard[0];
+        io.emit('updateDiscard', discardCard);
+        //update server players
+        if(typeof players[discard[1]] !== "undefined") {
+            for(var i in players[discard[1]].hand) {
+                if(players[discard[1]].hand[i].id === discard[0].id) {
+                    players[discard[1]].hand.splice(i,1)
+                }
+            }
+        }
         //Discard logic goes below
+        console.log("test discard name")
+        console.log(discardCard.name)
         if (discardCard.name === "Skip") {
             turns.add(turns.remove())
             whosTurn = turns.first()
@@ -139,14 +176,7 @@ io.on('connection', function (socket) { //2
             whosTurn = turns.first()
             turnManager(whosTurn)
         }
-
-        socket.emit('allplayers', players)
-    })
-
-    socket.on('disconnect', function () {
-        turns.delete(players[socket.id])
-        delete players[socket.id]
-        socket.broadcast.emit('deletedplayers', players)
+        io.emit('updatePlayers', players);
     })
 });
 

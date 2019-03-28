@@ -1,0 +1,174 @@
+html {
+    height: 100vh;
+    font-size: 62.5%;
+}
+body {
+    min-height: 100%;
+    background-image: url("/img/explodingNinjaBackground.png");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.hand {
+    overflow-x: scroll;
+    position: absolute;
+    left:0;
+    bottom: 0;
+    margin: 0px auto;
+    width: 100%;
+    height: 21rem;
+    border: 2px dashed pink;
+    /* background-image: url("./img/ninjaBanner.jpg"); */
+    background-position: 50% 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 2rem 2rem;
+}
+.hand::-webkit-scrollbar {
+    width: 0.8rem;
+    height: 0.8rem;
+}
+.hand::-webkit-scrollbar-thumb {
+    background-color: rgb(47, 49, 51);
+    border-radius: 3px;
+}
+.hand::-webkit-scrollbar-corner { 
+    background: rgba(0, 0, 0, 0); 
+}
+
+
+.card h5 {
+    text-align: center;
+    font-size: 1.5rem;
+}
+.card img {
+    height: 8rem;
+    margin: 0 auto;
+    width: 7.5rem;
+    position: relative;
+    bottom: 1rem;
+    display: block;
+    border-radius: 50%;
+    z-index: 1000;
+}
+
+.card p {
+    font-size: 1rem;
+    position: relative;
+    bottom: 1rem;
+}
+
+.card {
+    overflow-y: scroll;
+    background-image: url("/img/samuraiCover.jpg");
+    background-position: 60% 16%;
+    background-repeat: no-repeat;
+    background-size: 108%;
+    height: 17.5rem;
+    color: #fff;
+    width: 13rem;
+    border-radius: .6rem;
+    box-shadow: 0px 0px 5px 1px rgba(255, 255, 255, 0.44);
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    z-index: 1000;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    /* -webkit-font-smoothing: subpixel-antialiased; */
+    -webkit-font-smoothing: antialiased;
+
+
+}
+.card:hover {
+    -webkit-font-smoothing: antialiased;
+
+    /* height: 18rem;
+    width: 13.5rem; */
+    perspective: 1px;
+    box-shadow: 0px 0px 5px 1px #88d8ff;
+    transform: scale(1.048);
+
+}
+
+.packs {
+    position: relative;
+    box-sizing: border-box;
+    padding: 20rem;
+    height: 100vh;
+    width: 100%;
+
+    /* background-color: orange;
+    border: 2px dashed yellow; */
+}
+
+.packs__deck {
+    background-image: url("/img/samuraiCover.jpg");
+    opacity: .9;
+    background-position: 60% 16%;
+    background-repeat: no-repeat;
+    background-size: 108%;
+    height: 17.5rem;
+    color: #fff;
+    width: 13rem;
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px 1px rgba(255, 255, 255, 0.44);
+    display:inline-block;
+    position: absolute;
+    top: 45%;
+    left: 40%;
+    transform: translate(-50%,-50%);
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.packs__deck:hover {
+    height: 19rem;
+    width: 15rem;
+    /* transform: scale(1.1);
+    top: 36%;
+    left: 38%; */
+
+}
+
+.packs__discard {
+    background-image: url("/img/samuraiCover.jpg");
+    opacity: .9;
+    background-position: 60% 16%;
+    background-repeat: no-repeat;
+    background-size: 108%;
+    height: 17.5rem;
+    color: #fff;
+    width: 13rem;
+    border-radius: 6px;
+    box-shadow: 0px 0px 5px 1px rgba(255, 255, 255, 0.44);
+    display:inline-block;
+    position: absolute;
+    top: 45%;
+    left: 55%;
+    transform: translate(-50%,-50%);
+}
+
+.aplayer {
+    display: inline-block;
+    margin-right: 2.5rem;
+    border: 1px solid black;
+}
+.cardholder {
+    border: 1px solid black;
+}
+.playerscard {
+    border: 1px solid black;
+    width: 2rem;
+    height: 5rem;
+    display: inline-block;
+    margin-right: 1rem;
+}
+#mystats {
+    margin-top: 20%;
+    position:absolute;
+}
