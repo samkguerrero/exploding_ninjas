@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
-
         #hand {
             position: absolute;
             bottom: 0;
@@ -21,7 +20,7 @@
             width: 100px;
             border-radius: 15px;
             box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
-            display:inline-block;
+            display: inline-block;
             vertical-align: top;
             margin-right: 10px;
             padding: 10px;
@@ -34,34 +33,38 @@
             border: 2px solid black;
             box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
             border-radius: 15px;
-            display:inline-block;
+            display: inline-block;
             padding: 10px;
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-100%,-50%);
+            transform: translate(-100%, -50%);
         }
+
         #discard {
             height: 150px;
             width: 115px;
             border: 2px solid black;
             box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.582);
             border-radius: 15px;
-            display:inline-block;
+            display: inline-block;
             padding: 10px;
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(45%,-50%);
+            transform: translate(45%, -50%);
         }
+
         .aplayer {
             display: inline-block;
             margin-right: 25px;
             border: 1px solid black;
         }
+
         .cardholder {
             border: 1px solid black;
         }
+
         .playerscard {
             border: 1px solid black;
             width: 20px;
@@ -69,180 +72,35 @@
             display: inline-block;
             margin-right: 10px;
         }
+
         #mystats {
             margin-top: 20%;
-            position:absolute;
+            position: absolute;
         }
     </style>
 </head>
 
 <body>
 
-<!-- <div id="players"></div> -->
+    <!-- <div id="players"></div> -->
 
-<div id="deck">
-    <p id="deckLength">cards left 0</p>
-</div>
-<div id="discard">
-    <p id="deckLength">No cards Here</p>
-</div>
+    <div id="deck">
+        <p id="deckLength">cards left 0</p>
+    </div>
+    <div id="discard">
+        <p id="deckLength">No cards Here</p>
+    </div>
 
-<div id="hand">
-</div>
+    <div id="hand">
+    </div>
 
-<!-- <div id="mystats">
+    <!-- <div id="mystats">
     <p id="myid"></p>
     <p id="ismyturn"></p>
 </div> -->
 
-<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-<script>
-
-    $(document).ready(function (){
-
-        var socket = io(); //1
-
-        var local_players;
-        var my_id;
-        var hand;
-        var deck;
-        var discard;
-        var isTurn = false;
-
-        socket.on('new_user', function(data){
-            my_id = data.id
-            hand = data.hand
-            render_hand(hand)
-            $('#myid').html(my_id)
-        })
-
-        socket.on('senddecktoall', function(data){
-            deck = data
-            $('#deckLength').html('cards left ' + deck.length);
-        })
-
-        socket.on('playerjoin', function(data){
-            local_players = {};
-            visualizePlayers(local_players)
-            local_players = data
-            visualizePlayers(local_players)
-        })
-        socket.on('allplayers', function(data){
-            local_players = {};
-            visualizePlayers(local_players)
-            local_players = data
-            visualizePlayers(local_players)
-        })
-        socket.on('deletedplayers', function(data){
-            console.log("are we getting the delete call ?")
-            console.log(data)
-            local_players = {};
-            visualizePlayers(local_players)
-            local_players = data
-            visualizePlayers(local_players)
-        })
-
-        socket.on('turnupdate', function(data){
-            console.log("turnupdateon", data)
-            if (my_id === data.id) {
-                isTurn = true
-                $('#ismyturn').html('isTurn: true')
-            }
-            console.log("clients istrue", isTurn)
-        })
-        socket.on("updateddiscard", data => {
-            discard = data;
-            console.log("discraded card",discard);
-            $('#discard').empty();
-            $('#discard').append('<div class="card" id="'+ discard.id +'">' + discard.name + '</div>');
-        })
-
-        socket.on('disconnect', function(data){
-            console.log("discon in client")
-            console.log(data)
-            local_players = data;
-            visualizePlayers(local_players)
-        })
-
-        function render_hand(hand) {
-            for (var i = 0; i < hand.length; i++) {
-                $('#hand').append('<div class="card" id="'+ hand[i].id +'">' + hand[i].name + '</div>')
-            }
-        }
-
-        function visualizePlayers(players) {
-            for(var i in players) {
-                var ids = $('#' + players[i].id )
-                    .map(function() { return this.id })
-                    .get();
-                if (players[i].id != my_id && ids.length === 0) {
-                    $('#players').append('<div class="aplayer" id="' + players[i].id + '"></div>')
-                    $('#'+players[i].id).append('<p>ID:' + players[i].id + '</p><p>isTurn:' + players[i].isTurn + '</p>')
-                    $('#'+players[i].id).append('<div class="cardholder"></div>')
-                    for(var x in players[i].hand) {
-                        // console.log(players[i].hand[x].id)
-                        $('#'+players[i].id + ' .cardholder').append('<div id="' + players[i].hand[x].id + '" class="playerscard"></div>')
-                    }
-                }
-            }
-        }
-
-        $('#deck').click(function(){
-            if (isTurn) {
-                cardDrawn = deck.pop()
-                if (cardDrawn.id === 200) {
-                    console.log("drew explode")
-                    for (var i in hand) {
-                        console.log(hand[i].id)
-                        if (hand[i].id === 100) {
-                            var usedDiffuse = hand.splice(i,1)
-                            // console.log(usedDiffuse)
-                            $('#hand').empty();
-                            render_hand(hand);
-                            socket.emit("discard", usedDiffuse[0]);
-                            socket.emit("drewcard", my_id)
-                            isTurn = false
-                            return
-                        } 
-                    }
-                    console.log("you dead")
-                    isTurn = false
-                    socket.emit('playerdead', my_id)
-                }
-                hand.push(cardDrawn)
-                $('#hand').append('<div class="card" id="'+ hand[hand.length-1].id +'">' + hand[hand.length-1].name + '</div>')
-                socket.emit("drewcard", my_id)
-                socket.emit("updatedeck", deck)
-                isTurn = false;
-                $('#ismyturn').html('isTurn: false')
-            } else {
-                console.log("not your turn")
-            }
-        })
-
-        $('#hand').on("click", ".card", function(e){
-            if (isTurn) {
-                // console.log("hand before ",hand);
-                for(let i = 0; i <= hand.length; i++){
-                    console.log("hand id",hand[i].id);
-                    console.log("clicked card",e.target.id);
-                    if(hand[i].id === parseInt(e.target.id)){
-                        socket.emit("discard", hand[i]);
-                        hand.splice(i,1);
-                        $("#hand").empty();
-                        render_hand(hand);
-                        // console.log("hand after ",hand);
-                        break;
-                    }
-                } 
-            } else {
-                console.log("calm down not ur turn");
-            }
-        })
-
-        $('#ismyturn').html('isTurn: false')
-    });
-
-</script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script  type="text/javascript" src="/js/scripts.js"></script>
 </body>
+
 </html>
