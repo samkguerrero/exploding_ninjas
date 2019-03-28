@@ -298,29 +298,5 @@
         "name": "Favor",
         "rules": "One player must give you a card of thier choice",
         "url": "./img/samuraiBlue.png"
-    },
-    {
-        "id": 200,
-        "name": "Exploding Ninja",
-        "rules": "Reveal Card",
-        "url": "./img/samuraiCover.jpg"
-    },
-    {
-        "id": 200,
-        "name": "Exploding Ninja",
-        "rules": "Reveal Card",
-        "url": "./img/samuraiCover.jpg"
-    },
-    {
-        "id": 200,
-        "name": "Exploding Ninja",
-        "rules": "Reveal Card",
-        "url": "./img/samuraiCover.jpg"
-    },
-    {
-        "id": 200,
-        "name": "Exploding Ninja",
-        "rules": "Reveal Card",
-        "url": "./img/samuraiCover.jpg"
     }
 ]
