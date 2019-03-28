@@ -160,7 +160,7 @@ $(document).ready(function () {
     })
 
     $('#hand').on("click", ".card", function (e) {
-        if (isTurn) {
+        if (isTurn && !isAttacked) {
             for (let i = 0; i <= hand.length; i++) {
                 if (hand[i].id === parseInt(e.target.id)) {
                     socket.emit("discard", hand[i]);
