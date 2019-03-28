@@ -52,12 +52,16 @@ $(document).ready(function () {
             $('#ismyturn').html('isTurn: true')
             if(discard != undefined && discard.name === "Attack" && isTurn)
                 isAttacked = true;
+            else
+                isAttacked = false;
         }
         console.log("clients istrue", isTurn)
         console.log("Am i attacked",isAttacked)
     })
     socket.on("updateddiscard", data => {
         discard = data;
+        if(discard.name === "Attack1")
+            isAttacked = false;
         console.log("discraded card", discard);
         $('#discard').empty();
         $('#discard').append('<div class="card" id="' + discard.id + '">' + discard.name + '</div>');
@@ -111,12 +115,15 @@ $(document).ready(function () {
                         socket.emit("drewcard", my_id)
                         isTurn = false
                         isAttacked = false;
+                        attackCount = 0;
+
                         return
                     }
                 }
                 console.log("you dead")
                 isTurn = false
                 isAttacked = false;
+                attackCount = 0;
                 socket.emit('playerdead', my_id)
             }
             //draw and update hand
@@ -140,6 +147,8 @@ $(document).ready(function () {
                     socket.emit("updatedeck", deck)
                     isTurn = false;
                     isAttacked = false;
+                    attackCount = 0;
+                    discard = {id: 666, name: "Attack1"}
                     socket.emit("discard", {id:666, name: "Attack1"});
                     $('#ismyturn').html('isTurn: false')
                 }

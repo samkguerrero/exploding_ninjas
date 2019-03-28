@@ -9,7 +9,7 @@ server.listen(1337)
 var players = {};
 var deck = require('./static/img/deck.json');
 var whosTurn;
-var discardCard;
+var discardCard = {id: -1, name: "False"};
 
 function Queue() {
     this.data = [];
@@ -55,6 +55,7 @@ function turnManager(whosTurn) {
         }
     }
     io.emit('turnupdate', whosTurn)
+    io.emit("updateddiscard", discardCard);
 }
 
 shuffle(deck)
