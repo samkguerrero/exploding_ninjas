@@ -14,6 +14,7 @@ body {
 
 .hand {
     overflow-x: scroll;
+    overflow-y: hidden;
     position: absolute;
     left:0;
     bottom: 0;
@@ -26,6 +27,7 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     padding: 2rem 2rem;
+    white-space: nowrap;
 }
 .hand::-webkit-scrollbar {
     width: 0.8rem;
@@ -63,11 +65,11 @@ body {
 }
 
 .card {
-    /* overflow-y: scroll; */
     background-image: url("/img/samuraiCover.jpg");
     background-position: 60% 16%;
     background-repeat: no-repeat;
     background-size: 108%;
+    white-space: initial;
     height: 17.5rem;
     color: #fff;
     width: 13rem;
