@@ -124,7 +124,7 @@ $(document).ready(function () {
                 .get();
             if (players[i].id != localPlayer.id && ids.length === 0) {
                 $('#players').append('<div class="aplayer" id="' + players[i].id + '"></div>')
-                $('#'+players[i].id).append('<p>Name: ' + players[i].name + '</p><p>- isTurn: ' + players[i].isTurn + '</p>')
+                $('#'+players[i].id).append('<p>Name: ' + players[i].name + '</p><p>- Turn: ' + players[i].isTurn + '</p>')
                 $('#'+players[i].id).append('<div class="cardholder"></div>')
                 for(var x in players[i].hand) {
                     $('#'+players[i].id + ' .cardholder').append('<div id="' + players[i].hand[x].id + '" class="playerscard"></div>')
@@ -132,7 +132,13 @@ $(document).ready(function () {
             }
         }
         if(pickingRandom) {
-            $('.playerscard').css('border','6px solid green')
+            $('.playerscard').css('border','2px solid green');
+            $('.playerscard').hover(function(){
+                $(this).css('border','2px solid red');
+            }, function (){
+                $(this).css('border','2px solid green');
+            })
+            
         }
     }
 
