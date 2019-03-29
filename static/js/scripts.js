@@ -174,6 +174,7 @@ $(document).ready(function () {
 
     $('#deck').click(function(){
         if (localPlayer.isTurn) {
+            $('.seeFuture').html(seeFuture)
             var cardDrawn = deck.pop()
             if (cardDrawn.id === 200) {
                 console.log("drew explode")
@@ -229,6 +230,17 @@ $(document).ready(function () {
             console.log("Not your turn.")
         }
     })
+    
+    function shuffle(array) {
+        var m = array.length, t, i;
+        while (m) {
+            i = Math.floor(Math.random() * m--);
+            t = array[m];
+            array[m] = array[i];
+            array[i] = t;
+        }
+        return array;
+    }
 
     $('#hand').on("click", ".card", function(e){
         if (localPlayer.isTurn && !isAttacked) {
@@ -241,9 +253,17 @@ $(document).ready(function () {
                     } else if(localPlayer.hand[i].name === "Attack") {
                         localPlayer.isTurn = false; 
                     } else if(localPlayer.hand[i].name === "See the future") {
-                        seeFuture = deck[deck.length-1].name + ", " + deck[deck.length-2].name + ", " + deck[deck.length-3].name
+                        seeFuture = deck[deck.length-1].name + ", " 
+                        + deck[deck.length-2].name + ", " + deck[deck.length-3].name
                         console.log("Next three cards are: ", seeFuture)
+                        $('.seeFuture').html("Next three cards are: "+ seeFuture)
                         seeFuture = ""
+                    }
+                    else if(localPlayer.hand[i].name === "Shuffle")
+                    {
+                        shuffle(deck);
+                        socket.emit("updateDeck", deck)
+
                     }
                     localPlayer.hand.splice(i,1);
                     $("#hand").empty();
@@ -255,5 +275,6 @@ $(document).ready(function () {
             console.log("Calm down not ur turn.");
         }
     })
+
 
 });
