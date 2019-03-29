@@ -7,6 +7,7 @@ $(document).ready(function () {
     var deck;
     var localDiscard;
     var isAttacked = false;
+    var pickingRandom = false;
     var attackCount = 0;
     var seeFuture = "";
 
@@ -236,6 +237,27 @@ $(document).ready(function () {
         return array;
     }
 
+    $(document).on('click', "div.playerscard", function(e) {
+        if (pickingRandom && localPlayer.isTurn) {
+            playersHand = localPlayers[e.currentTarget.parentElement.parentElement.id].hand
+            playersId = e.currentTarget.parentElement.parentElement.id.toString()
+            for(var i in playersHand) {
+                if (playersHand[i].id.toString() ===  e.target.id.toString()) {
+                    localPlayer.hand.push(playersHand[i])
+                    $('#hand').empty()
+                    renderHand(localPlayer.hand)
+                    localPlayers[playersId].hand.splice(i,1)
+                    visualizePlayers(localPlayers)
+                    //emit to player they have 1 less card on server - let everyone know
+                    //emit to player on server they have one more card - let everyone know
+                    pickingRandom = false;
+                }
+            }
+        } else {
+            console.log("you need two cards of the same")
+        }
+    })
+
     $('#hand').on("click", ".card", function(e){
         if (localPlayer.isTurn && !isAttacked) {
             for(let i = 0; i <= localPlayer.hand.length; i++){
@@ -252,12 +274,11 @@ $(document).ready(function () {
                         console.log("Next three cards are: ", seeFuture)
                         $('.seeFuture').html("Next three cards are: "+ seeFuture)
                         seeFuture = ""
-                    }
-                    else if(localPlayer.hand[i].name === "Shuffle")
-                    {
+                    } else if(localPlayer.hand[i].name === "Shuffle") {
                         shuffle(deck);
                         socket.emit("updateDeck", deck)
-
+                    } else if(localPlayer.hand[i].name === localDiscard.name) {
+                        pickingRandom = true;
                     }
                     localPlayer.hand.splice(i,1);
                     $("#hand").empty();

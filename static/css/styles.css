@@ -162,6 +162,7 @@ body {
     border: 1px solid black;
 }
 .playerscard {
+    z-index: 100;
     border: 1px solid black;
     width: 2rem;
     height: 5rem;
