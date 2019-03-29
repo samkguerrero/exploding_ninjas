@@ -28,9 +28,11 @@ Queue.prototype.first = function () {
     return this.data[0];
 }
 Queue.prototype.delete = function (playerid) {
-    for (var i in this.data) {
-        if (playerid.id === this.data[i].id) {
-            this.data.splice(i, 1)
+    if(typeof playerid != "undefined") {
+        for (var i in this.data) {
+            if (playerid.id === this.data[i].id) {
+                this.data.splice(i, 1)
+            }
         }
     }
 }

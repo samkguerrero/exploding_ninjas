@@ -10,6 +10,7 @@ $(document).ready(function () {
     var pickingRandom = false;
     var attackCount = 0;
     var seeFuture = "";
+    var usedCards = [];
 
     $('#resetGame').hide();
     $('#deck').hide();
@@ -32,8 +33,8 @@ $(document).ready(function () {
             playersCount++
             $('#playerLobby').append('<div id="' + allPlayers[i].name + '"><p>Player joined: ' + allPlayers[i].name + '</p></div>')
         }
-        $('#startGame').html(playersCount.toString() + '/2 START GAME')
-        if (playersCount === 2) {
+        $('#startGame').html(playersCount.toString() + '/3 START GAME')
+        if (playersCount === 3) {
             $('#startGame').prop("disabled", false)
         }
     })
@@ -118,6 +119,9 @@ $(document).ready(function () {
                     $('#'+players[i].id + ' .cardholder').append('<div id="' + players[i].hand[x].id + '" class="playerscard"></div>')
                 }
             }
+        }
+        if(pickingRandom) {
+            $('.playerscard').css('border','6px solid green')
         }
     }
 
@@ -206,6 +210,7 @@ $(document).ready(function () {
                         renderHand(localPlayer.hand)
                         $(".blur").css("filter", "blur(4.5px)");
                         $('#howManyDown').show()
+                        usedCards = []
                         return
                     }
                 }
@@ -217,6 +222,7 @@ $(document).ready(function () {
                 attackCount = 0;
                 socket.emit('playerDead', localPlayer.id)
             }
+            usedCards = []
             if (!isAttacked) {
                 localPlayer.hand.push(cardDrawn)
                 $('#hand').append('<div class="card" style="background-image: url('+ localPlayer.hand[localPlayer.hand.length-1].url +');" id="'+ localPlayer.hand[localPlayer.hand.length-1].id +'"><h5>"'+ localPlayer.hand[localPlayer.hand.length-1].name +'"</h5><p>"'+ localPlayer.hand[localPlayer.hand.length-1].rules +'"</p></div>');
@@ -247,7 +253,7 @@ $(document).ready(function () {
                 }
             }
             //
-
+            usedCards = []
         } else {
             console.log("Not your turn.")
         }
@@ -266,14 +272,12 @@ $(document).ready(function () {
 
     socket.on('TakePlayerCard', function(data){
         if(data[0] === localPlayer.id) {
-            console.log("this is the update SAM!")
-            console.log(data)
             for (var i in localPlayer.hand) {
                 if(localPlayer.hand[i].id === data[1].id) {
-                    localPlayer.hand.slice(i,1)
+                    localPlayer.hand.splice(i,1)
                 }
             }
-            ('#hand').empty()
+            $('#hand').empty()
             renderHand(localPlayer.hand)
         }
     })
@@ -283,18 +287,19 @@ $(document).ready(function () {
             playersHand = localPlayers[e.currentTarget.parentElement.parentElement.id].hand
             playersId = e.currentTarget.parentElement.parentElement.id.toString()
             for(var i in playersHand) {
-                if (playersHand[i].id.toString() ===  e.target.id.toString()) {
-                    localPlayer.hand.push(playersHand[i])
+                theCard = playersHand[i]
+                console.log("thecard")
+                console.log(theCard)
+                if (theCard.id.toString() ===  e.target.id.toString()) {
+                    localPlayer.hand.push(theCard)
                     $('#hand').empty()
                     renderHand(localPlayer.hand)
-                    socket.emit('playerLosingCard', [playersId,playersHand[i]])
+                    socket.emit('playerLosingCard', [playersId,theCard])
                     localPlayers[playersId].hand.splice(i,1)
-                    localPlayers[localPlayer.id].hand.push(playersHand[i])
-                    visualizePlayers(localPlayers)
-                    socket.emit('playersGotChanged', localPlayers)                    
-                    //emit to player they have 1 less card on server - let everyone know
-                    //emit to player on server they have one more card - let everyone know
+                    localPlayers[localPlayer.id].hand.push(theCard)
+                    socket.emit('playersGotChanged', localPlayers)                  
                     pickingRandom = false;
+                    usedCards = []
                 }
             }
         } else {
@@ -307,6 +312,16 @@ $(document).ready(function () {
             for (let i = 0; i <= localPlayer.hand.length; i++) {
                 if (localPlayer.hand[i].id === parseInt(e.target.parentElement.id) || localPlayer.hand[i].id === parseInt(e.target.id)) {
                     socket.emit("discard", [localPlayer.hand[i], localPlayer.id]);
+                    usedCards.push(localPlayer.hand[i])
+                    console.log("just added a card to dis")
+                    console.log(usedCards)
+                    if(usedCards.length >= 2) {
+                        console.log(usedCards[usedCards.length-2].name)
+                        console.log(usedCards[usedCards.length-1].name)
+                        if(usedCards[usedCards.length-1].name === usedCards[usedCards.length-2].name) {
+                            pickingRandom = true;
+                        }
+                    }
                     //Discard logic goes below
                     if (localPlayer.hand[i].name === "Skip") {
                         localPlayer.isTurn = false;
@@ -322,8 +337,6 @@ $(document).ready(function () {
                     else if (localPlayer.hand[i].name === "Shuffle the draw") {
                         shuffle(deck);
                         socket.emit("updateDeck", deck)
-                    } else if(localPlayer.hand[i].name === localDiscard.name) {
-                        pickingRandom = true;
                     }
                     localPlayer.hand.splice(i, 1);
                     $("#hand").empty();
