@@ -161,8 +161,15 @@ $(document).ready(function () {
             localPlayer.isTurn = true
             $('#isMyTurn').html('turn: ' + localPlayer.isTurn.toString())
             //hatham animate HERE HERE
+            $('#yourTurn').css('display','block')
             $('#yourTurn').show()
-            setTimeout(function() {$('#yourTurn').addClass('zoomOut');},2000);
+            setTimeout(function() {
+                $('#yourTurn').addClass('zoomOut');
+                setTimeout(function() {
+                    $('#yourTurn').css('display','none');
+                    $('#yourTurn').removeClass('zoomOut');
+                }, 1500);
+            },2000);
         } else {
             $('#isMyTurn').html('turn: ' + localPlayer.isTurn.toString())
         }
