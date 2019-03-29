@@ -5,8 +5,9 @@ $(document).ready(function () {
     var localPlayers;
     var localPlayer;
     var deck;
-    var localDiscard;
+    var localDiscard = {name: ""};
     var isAttacked = false;
+    var pickingRandom = false;
     var attackCount = 0;
     var seeFuture = "";
 
@@ -14,14 +15,14 @@ $(document).ready(function () {
     $('#deck').hide();
     $('#discard').hide();
     $('#hand').hide();
-    $('#howManyDown').hide()
+    $('#howManyDown').hide();
 
     $('#joinButton').click(function () {
         playerNewName = $('#nameInput').val();
-        socket.emit('playerJoined', playerNewName)
-        $('#nameInputLabel').remove()
-        $('#nameInput').remove()
-        $('#joinButton').remove()
+        socket.emit('playerJoined', playerNewName);
+        $('#nameInputLabel').remove();
+        $('#nameInput').remove();
+        $('#joinButton').remove();
     })
 
     socket.on('joinedLobby', function (allPlayers) {
@@ -43,10 +44,12 @@ $(document).ready(function () {
 
     $('#startGame').click(function () {
         socket.emit('startGame')
+        $('#loginWrapper').remove();
     })
 
     socket.on('serverStartingGame', function (gameBoardStart) {
         $('#playerLobby').remove();
+        $('#loginWrapper').remove();        
         $('#startGame').remove();
         $('#resetGame').show();
         $('#deck').show();
@@ -74,19 +77,24 @@ $(document).ready(function () {
                 localPlayer = localPlayers[i]
             }
         }
-        $('#myName').html(localPlayer.name)
-        $('#isMyTurn').html('turn: ' + localPlayer.isTurn.toString())
+        $('#myName').html("Name: " + localPlayer.name)
+        $('#isMyTurn').html(' - Turn: ' + localPlayer.isTurn.toString())
     }
 
     function renderHand(hand) {
         for (var i = 0; i < hand.length; i++) {
-            $('#hand').append('<div class="card" style="background-image: url(' + localPlayer.hand[i].url + ');" id="' + localPlayer.hand[i].id + '"><h5>"' + localPlayer.hand[i].name + '"</h5><img class="animated pulse infinite" src="./img/ninjaLogo2.png" alt="ninjalogo"><p>"' + localPlayer.hand[i].rules + '"</p></div>');
+            $('#hand').append('<div class="card" style="background-image: url('+ localPlayer.hand[i].url +');" id="'+ localPlayer.hand[i].id +'"><h5>"'+ localPlayer.hand[i].name +'"</h5><p>"'+ localPlayer.hand[i].rules +'"</p></div>');
+            // $('#hand').append('<div class="card" style="background-image: url('+ localPlayer.hand[i].url +');" id="'+ localPlayer.hand[i].id +'"><h5>"'+ localPlayer.hand[i].name +'"</h5><img class="animated pulse infinite" src="./img/ninjaLogo2.png" alt="ninjalogo"><p>"'+ localPlayer.hand[i].rules +'"</p></div>');
         }
     }
 
-    socket.on('someoneWon', function () {
-        alert("Someone has won")
+    socket.on('someoneWon', function (winnerPlayer) {
+        $('.turnStatus').html(winnerPlayer.name + " is new Prescott 2.0 -- WINNER!!!")
         socket.emit('startGame')
+    })
+
+    socket.on('announceDead', function(deadPlayer){
+        $('.turnStatus').html(deadPlayer.name + " has been EXPLODED!!!")
     })
 
     socket.on('deletedPlayer', function (data) {
@@ -104,10 +112,10 @@ $(document).ready(function () {
                 .get();
             if (players[i].id != localPlayer.id && ids.length === 0) {
                 $('#players').append('<div class="aplayer" id="' + players[i].id + '"></div>')
-                $('#' + players[i].id).append('<p>Name:' + players[i].name + '</p><p>isTurn:' + players[i].isTurn + '</p>')
-                $('#' + players[i].id).append('<div class="cardholder"></div>')
-                for (var x in players[i].hand) {
-                    $('#' + players[i].id + ' .cardholder').append('<div id="' + players[i].hand[x].id + '" class="playerscard"></div>')
+                $('#'+players[i].id).append('<p>Name: ' + players[i].name + '</p><p>- isTurn: ' + players[i].isTurn + '</p>')
+                $('#'+players[i].id).append('<div class="cardholder"></div>')
+                for(var x in players[i].hand) {
+                    $('#'+players[i].id + ' .cardholder').append('<div id="' + players[i].hand[x].id + '" class="playerscard"></div>')
                 }
             }
         }
@@ -150,14 +158,16 @@ $(document).ready(function () {
         }
         console.log("discraded card", localDiscard);
         $('#discard').empty();
-        $('#discard').append('<div class="card" style="background-image: url(' + localDiscard.url + ')" id="' + localDiscard.id + '"><h5>"' + localDiscard.name + '"</h5><img class="animated pulse infinite" src="./img/ninjaLogo2.png" alt="ninjalogo"><p>"' + localDiscard.rules + '"</p></div>');
+        $('#discard').append('<div class="card" style="background-image: url('+ localDiscard.url +')" id="'+ localDiscard.id +'"><h5>"'+ localDiscard.name +'"</h5><p>"'+ localDiscard.rules +'"</p></div>');
     })
 
     socket.on('addExplosion', function (howManyDown) {
         var explodingNinja = { "id": 200, "name": "Exploding Ninja", "rules": "Reveal Card", "url": "" }
         console.log("deck before:", deck)
-        deck.splice(howManyDown, 0, explodingNinja)
+        deck.splice(deck.length - howManyDown, 0, explodingNinja)
         console.log("deck after:", deck)
+        socket.emit("updateDeck", deck)
+
 
         $('#deckLength').html('cards left ' + deck.length);
     })
@@ -170,8 +180,11 @@ $(document).ready(function () {
 
     $('#subHowManyDown').click(function () {
         var howManyDown = $('#valHowManyDown').val();
-        socket.emit('newLocationForExplode', howManyDown)
-        $('#howManyDown').hide()
+        console.log("how many down", howManyDown)
+        socket.emit('newLocationForExplode',howManyDown)
+        $('#howManyDown').hide();
+        $(".blur").css("filter", "blur(0px)");
+
     })
 
     $('#deck').click(function () {
@@ -181,6 +194,7 @@ $(document).ready(function () {
             var cardDrawn = deck.pop()
             if (cardDrawn.id === 200) {
                 console.log("drew explode")
+                socket.emit("updateDeck", deck)
                 for (var i in localPlayer.hand) {
                     if (localPlayer.hand[i].id === 100) {
                         $('.turnStatus').html("You have drawn Exploding Ninja! You have used your Defuse Card. Put Exploding Ninja anywhere in the deck")
@@ -190,6 +204,7 @@ $(document).ready(function () {
                         localPlayer.isTurn = false
                         $('#hand').empty()
                         renderHand(localPlayer.hand)
+                        $(".blur").css("filter", "blur(4.5px)");
                         $('#howManyDown').show()
                         return
                     }
@@ -204,8 +219,8 @@ $(document).ready(function () {
             }
             if (!isAttacked) {
                 localPlayer.hand.push(cardDrawn)
-                $('#hand').append('<div class="card" style="background-image: url(' + localPlayer.hand[localPlayer.hand.length - 1].url + ');" id="' + localPlayer.hand[localPlayer.hand.length - 1].id + '"><h5>"' + localPlayer.hand[localPlayer.hand.length - 1].name + '"</h5><img class="animated pulse infinite" src="./img/ninjaLogo2.png" alt="ninjalogo"><p>"' + localPlayer.hand[localPlayer.hand.length - 1].rules + '"</p></div>');
-                socket.emit("updatePlayerWhoDrew", { 'player': localPlayer.id, 'card': cardDrawn })
+                $('#hand').append('<div class="card" style="background-image: url('+ localPlayer.hand[localPlayer.hand.length-1].url +');" id="'+ localPlayer.hand[localPlayer.hand.length-1].id +'"><h5>"'+ localPlayer.hand[localPlayer.hand.length-1].name +'"</h5><p>"'+ localPlayer.hand[localPlayer.hand.length-1].rules +'"</p></div>');
+                socket.emit("updatePlayerWhoDrew", {'player': localPlayer.id, 'card': cardDrawn})
                 socket.emit("turnEnded", localPlayer.id)
                 socket.emit("updateDeck", deck)
                 localPlayer.isTurn = false;
@@ -214,7 +229,7 @@ $(document).ready(function () {
             else {
                 attackCount++;
                 localPlayer.hand.push(cardDrawn)
-                $('#hand').append('<div class="card" style="background-image: url(' + localPlayer.hand[localPlayer.hand.length - 1].url + ');" id="' + localPlayer.hand[localPlayer.hand.length - 1].id + '"><h5>"' + localPlayer.hand[localPlayer.hand.length - 1].name + '"</h5><img class="animated pulse infinite" src="./img/ninjaLogo2.png" alt="ninjalogo"><p>"' + localPlayer.hand[localPlayer.hand.length - 1].rules + '"</p></div>');
+                $('#hand').append('<div class="card" style="background-image: url('+ localPlayer.hand[localPlayer.hand.length-1].url +');" id="'+ localPlayer.hand[localPlayer.hand.length-1].id +'"><h5>"'+ localPlayer.hand[localPlayer.hand.length-1].name +'"</h5><p>"'+ localPlayer.hand[localPlayer.hand.length-1].rules +'"</p></div>');
                 socket.emit("updateDeck", deck)
                 if (attackCount > 1) {
                     socket.emit("turnEnded", localPlayer.id)
@@ -222,8 +237,12 @@ $(document).ready(function () {
                     localPlayer.isTurn = false;
                     isAttacked = false;
                     attackCount = 0;
-                    localDiscard = { id: 666, name: "Attack " }
-                    socket.emit("discard", [{ id: 666, name: "Attack " }, localPlayer.id]);
+                    localDiscard = { id: 666, name: "Attack ",
+                    rules: "End your turn without drawing a card. Force the next player to take two turns", 
+                    url: "./img/samuraiBlue.png"
+                }
+                    socket.emit("discard", [{ id: 666, name: "Attack ",rules: "End your turn without drawing a card. Force the next player to take two turns", 
+                    url: "./img/samuraiBlue.png" }, localPlayer.id]);
                     $('#isMyTurn').html('turn: ' + localPlayer.isTurn.toString())
                 }
             }
@@ -245,7 +264,28 @@ $(document).ready(function () {
         return array;
     }
 
-    $('#hand').on("click", ".card", function (e) {
+    $(document).on('click', "div.playerscard", function(e) {
+        if (pickingRandom && localPlayer.isTurn) {
+            playersHand = localPlayers[e.currentTarget.parentElement.parentElement.id].hand
+            playersId = e.currentTarget.parentElement.parentElement.id.toString()
+            for(var i in playersHand) {
+                if (playersHand[i].id.toString() ===  e.target.id.toString()) {
+                    localPlayer.hand.push(playersHand[i])
+                    $('#hand').empty()
+                    renderHand(localPlayer.hand)
+                    localPlayers[playersId].hand.splice(i,1)
+                    visualizePlayers(localPlayers)
+                    //emit to player they have 1 less card on server - let everyone know
+                    //emit to player on server they have one more card - let everyone know
+                    pickingRandom = false;
+                }
+            }
+        } else {
+            console.log("you need two cards of the same")
+        }
+    })
+
+    $('#hand').on("click", ".card", function(e){
         if (localPlayer.isTurn && !isAttacked) {
             for (let i = 0; i <= localPlayer.hand.length; i++) {
                 if (localPlayer.hand[i].id === parseInt(e.target.parentElement.id) || localPlayer.hand[i].id === parseInt(e.target.id)) {
@@ -265,7 +305,8 @@ $(document).ready(function () {
                     else if (localPlayer.hand[i].name === "Shuffle the draw") {
                         shuffle(deck);
                         socket.emit("updateDeck", deck)
-
+                    } else if(localPlayer.hand[i].name === localDiscard.name) {
+                        pickingRandom = true;
                     }
                     localPlayer.hand.splice(i, 1);
                     $("#hand").empty();
@@ -277,6 +318,8 @@ $(document).ready(function () {
             console.log("Calm down not ur turn.");
         }
     })
+
+
 
 
 });
