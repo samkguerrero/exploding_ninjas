@@ -16,6 +16,7 @@ $(document).ready(function () {
     $('#discard').hide();
     $('#hand').hide();
     $('#howManyDown').hide();
+    $('#action').hide();
 
     $('#joinButton').click(function () {
         playerNewName = $('#nameInput').val();
@@ -23,6 +24,11 @@ $(document).ready(function () {
         $('#nameInputLabel').remove();
         $('#nameInput').remove();
         $('#joinButton').remove();
+    })
+
+    $("#close").click(() => {
+        $('#action').hide();
+        $(".blur").css("filter", "blur(0px)");
     })
 
     socket.on('joinedLobby', function (allPlayers) {
@@ -48,6 +54,7 @@ $(document).ready(function () {
     })
 
     socket.on('serverStartingGame', function (gameBoardStart) {
+        $('#aboutUs').remove();
         $('#playerLobby').remove();
         $('#loginWrapper').remove();        
         $('#startGame').remove();
@@ -89,12 +96,16 @@ $(document).ready(function () {
     }
 
     socket.on('someoneWon', function (winnerPlayer) {
-        $('.turnStatus').html(winnerPlayer.name + " is new Prescott 2.0 -- WINNER!!!")
+        $(".blur").css("filter", "blur(4.5px)");
+        $('#action').show()
+        $('.winner').html(winnerPlayer.name + " is new Prescott 2.0 -- WINNER!!!")
         socket.emit('startGame')
     })
 
     socket.on('announceDead', function(deadPlayer){
-        $('.turnStatus').html(deadPlayer.name + " has been EXPLODED!!!")
+        $(".blur").css("filter", "blur(4.5px)");
+        $('#action').show()
+        $('.loser').html(deadPlayer.name + " has been EXPLODED!!!")
     })
 
     socket.on('deletedPlayer', function (data) {
@@ -144,6 +155,8 @@ $(document).ready(function () {
             isAttacked = false;
 
         if (localDiscard.name === "Attack" && localPlayer.isTurn) {
+            $(".blur").css("filter", "blur(4.5px)");
+            $('#action').show()
             $('.turnStatus').html("You have been attacked! Draw two cards")
         }
         console.log("clients istrue", localPlayer.isTurn)
@@ -197,7 +210,6 @@ $(document).ready(function () {
                 socket.emit("updateDeck", deck)
                 for (var i in localPlayer.hand) {
                     if (localPlayer.hand[i].id === 100) {
-                        $('.turnStatus').html("You have drawn Exploding Ninja! You have used your Defuse Card. Put Exploding Ninja anywhere in the deck")
                         var usedDiffuse = localPlayer.hand.splice(i, 1)
                         socket.emit("discard", [usedDiffuse[0], localPlayer.id]);
                         socket.emit("turnEnded", localPlayer.id)
@@ -205,12 +217,15 @@ $(document).ready(function () {
                         $('#hand').empty()
                         renderHand(localPlayer.hand)
                         $(".blur").css("filter", "blur(4.5px)");
-                        $('#howManyDown').show()
+                        $('#howManyDown').show();
+                        $('.infoHowManyDown').html("You have drawn Exploding Ninja! You have used your Defuse Card. Put Exploding Ninja anywhere in the deck");
                         return
                     }
                 }
                 console.log("you dead")
-                $('.turnStatus').html("You have drawn Exploding Ninja! You don't have any more defuses. Good bye!")
+                $(".blur").css("filter", "blur(4.5px)");
+                $('#action').show()
+                $('.loserStatus').html(localPlayer.name + " has drawn Exploding Ninja! He doesn't have any more defuses.")
 
                 localPlayer.isTurn = false
                 isAttacked = false;
@@ -249,6 +264,9 @@ $(document).ready(function () {
             //
 
         } else {
+            $(".blur").css("filter", "blur(4.5px)");
+            $('#action').show();
+            $('.turnStatus').html("Not Your Turn!!");
             console.log("Not your turn.")
         }
     })
@@ -315,9 +333,11 @@ $(document).ready(function () {
                     } else if (localPlayer.hand[i].name === "See the future") {
                         seeFuture = deck[deck.length - 1].name + ", "
                             + deck[deck.length - 2].name + ", " + deck[deck.length - 3].name
-                        console.log("Next three cards are: ", seeFuture)
-                        $('.seeFuture').html("Next three cards are: " + seeFuture)
-                        seeFuture = ""
+                        console.log("Next three cards are: ", seeFuture);
+                        $(".blur").css("filter", "blur(4.5px)");
+                        $('#action').show()
+                        $('.seeFuture').html("Next three cards are: " + seeFuture);
+                        seeFuture = "";
                     }
                     else if (localPlayer.hand[i].name === "Shuffle the draw") {
                         shuffle(deck);
@@ -332,6 +352,9 @@ $(document).ready(function () {
                 }
             }
         } else {
+            $(".blur").css("filter", "blur(4.5px)");
+            $('#action').show();
+            $('.turnStatus').html("Calm down not ur turn.");
             console.log("Calm down not ur turn.");
         }
     })
