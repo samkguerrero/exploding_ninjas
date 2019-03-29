@@ -162,6 +162,9 @@ $(document).ready(function () {
             $(".blur").css("filter", "blur(4.5px)");
             $('#action').show()
             $('.turnStatus').html("You have been attacked! Draw two cards")
+        if(localDiscard.name === "Attack ")
+            $('.turnStatus').html("")
+
         }
         console.log("clients istrue", localPlayer.isTurn)
         console.log("Am i attacked", isAttacked)
@@ -172,6 +175,9 @@ $(document).ready(function () {
         // console.log("discraded card",discard);
         if (localDiscard.name === "Attack ") {
             isAttacked = false;
+            $('.turnStatus').html("")//close it here
+            $('#action').hide();
+            $(".blur").css("filter", "blur(0px)");
         }
         console.log("discraded card", localDiscard);
         $('#discard').empty();
