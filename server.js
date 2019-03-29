@@ -151,6 +151,15 @@ io.on('connection', function (socket) {
         socket.emit('addExplosion',howManyDown);
     })
     
+    socket.on('playersGotChanged', function(newPlayers){
+        players = newPlayers
+        io.emit('updatePlayers', newPlayers);
+    })
+
+    socket.on('playerLosingCard', function(userCard){
+        io.emit('TakePlayerCard', userCard)
+    })
+
     socket.on("discard", discard => {
         discardCard = discard[0];
         io.emit('updateDiscard', discardCard);

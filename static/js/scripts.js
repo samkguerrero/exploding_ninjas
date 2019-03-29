@@ -243,6 +243,20 @@ $(document).ready(function () {
         return array;
     }
 
+    socket.on('TakePlayerCard', function(data){
+        if(data[0] === localPlayer.id) {
+            console.log("this is the update SAM!")
+            console.log(data)
+            for (var i in localPlayer.hand) {
+                if(localPlayer.hand[i].id === data[1].id) {
+                    localPlayer.hand.slice(i,1)
+                }
+            }
+            ('#hand').empty()
+            renderHand(localPlayer.hand)
+        }
+    })
+
     $(document).on('click', "div.playerscard", function(e) {
         if (pickingRandom && localPlayer.isTurn) {
             playersHand = localPlayers[e.currentTarget.parentElement.parentElement.id].hand
@@ -252,8 +266,11 @@ $(document).ready(function () {
                     localPlayer.hand.push(playersHand[i])
                     $('#hand').empty()
                     renderHand(localPlayer.hand)
+                    socket.emit('playerLosingCard', [playersId,playersHand[i]])
                     localPlayers[playersId].hand.splice(i,1)
+                    localPlayers[localPlayer.id].hand.push(playersHand[i])
                     visualizePlayers(localPlayers)
+                    socket.emit('playersGotChanged', localPlayers)                    
                     //emit to player they have 1 less card on server - let everyone know
                     //emit to player on server they have one more card - let everyone know
                     pickingRandom = false;

@@ -176,13 +176,8 @@ body {
     padding: .7rem;
 }
 .playerscard {
-<<<<<<< HEAD
-    z-index: 100;
-    border: 1px solid black;
-=======
     /* border: 1px solid black; */
     background-image: url("/img/samuraiCover.jpg");
->>>>>>> 914e88c79be9eba92a05b5581eef9b66a5a31797
     width: 2rem;
     height: 3.3rem;
     display: inline-block;
