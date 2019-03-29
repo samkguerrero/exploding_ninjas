@@ -129,6 +129,9 @@ $(document).ready(function () {
                 for(var x in players[i].hand) {
                     $('#'+players[i].id + ' .cardholder').append('<div id="' + players[i].hand[x].id + '" class="playerscard"></div>')
                 }
+                if(players[i].isTurn === true) {
+                    $('#' + players[i].id ).css('border','2px solid green');
+                }
             }
         }
         if(pickingRandom) {
