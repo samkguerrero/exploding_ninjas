@@ -18,6 +18,7 @@ $(document).ready(function () {
     $('#hand').hide();
     $('#howManyDown').hide();
     $('#action').hide();
+    $('#yourTurn').hide();
 
     $('#joinButton').click(function () {
         playerNewName = $('#nameInput').val();
@@ -159,6 +160,9 @@ $(document).ready(function () {
         if (localPlayer.id === data.id) {
             localPlayer.isTurn = true
             $('#isMyTurn').html('turn: ' + localPlayer.isTurn.toString())
+            //hatham animate HERE HERE
+            $('#yourTurn').show()
+            setTimeout(function() {$('#yourTurn').addClass('zoomOut');},2000);
         } else {
             $('#isMyTurn').html('turn: ' + localPlayer.isTurn.toString())
         }
