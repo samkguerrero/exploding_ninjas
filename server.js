@@ -90,7 +90,7 @@ io.on('connection', function (socket) {
         turns.delete(players[socket.id])
         delete players[socket.id]
         io.emit('deletedPlayer', socket.id)
-    })
+    });
 
     socket.on('startGame', function(data){
         for (var i in players) {
@@ -118,7 +118,7 @@ io.on('connection', function (socket) {
             deck: deck
         }
         io.emit('serverStartingGame', gameBoardStart )
-    })
+    });
         
     socket.on('updateDeck', function(data) {
         io.emit('sendDeckTotal', data);

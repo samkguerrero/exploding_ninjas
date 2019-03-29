@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="/css/styles.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -15,40 +16,53 @@
     <button id="resetGame">Reset Game</button>
     <p class = "seeFuture"></p>
 
-    <div id="players"></div>
-    
-    <div class="packs">
-        <div id="deck" class="packs__deck">
-            <p id="deckLength" class="text-center">Cards Left 0</p>
+    <div class="blur" style="height: 100vh;">
+        <div id="players"></div>
+        
+        <div id="packs" class="packs">
+            <div id="deck" class="packs__deck">
+                <p id="deckLength" class="text-center">Cards Left 0</p>
+            </div>
+            <div id="discard" class="packs__discard discard">
+                <p id="deckLength" class="text-center">No Cards Here</p>
+            </div>
         </div>
-        <div id="discard" class="packs__discard discard">
-            <p id="deckLength" class="text-center">No Cards Here</p>
+        
+        
+        <div class="handWrapper">
+            
+            <div id="myStats">
+                <p id="myName"></p>
+                <p id="isMyTurn"></p>
+            </div>
+            <div id="hand" class="hand">
+            </div>
+        </div>
+        
+        
+        
+        <div id="loginWrapper" class="loginWrapper">
+            <form>
+                <div class="form-group text-center">
+                    <label id="nameInputLabel" class="loginLabel" for="name">Enter Your Name:</label>                <input id="nameInput" class="loginInput form-control" type="text" name="name" placeholder="Whats's your ninja name?">
+                </div>
+                <div class="btnWrapper text-center">
+                    <button id="joinButton" class="joinbtn btn btn-success" >Join</button>
+                    <button id="startGame" class="startGamebtn btn btn-danger" disabled>0/2 Start Game</button>
+                </div>
+            </form>
+            <div id="playerLobby"></div>
         </div>
     </div>
-    
-    <div id="howManyDown">
-        <p>How many cards down to place the bomb?</p>
-        <input min="0" max="40" type="number" id="valHowManyDown"></input>
+
+    <div id="howManyDown" class="howManyDown">
+        <p class="text-center">How many cards down to place the bomb?</p>
+        <input min="0" max="40" type="number" id="valHowManyDown" class="valHowManyDown"></input>
         <button id="subHowManyDown">Put card back in deck</button>
     </div>
-    
-    <div id="hand">
-    </div>
-    
-    <div id="myStats">
-        <p id="myName"></p>
-        <p id="isMyTurn"></p>
-    </div>
-    
-    <label id="nameInputLabel" for="name">Enter your name:</label>
-    <input id="nameInput" type="text" name="name">
-    <button id="joinButton">Join</button>
-    <button id="startGame" disabled>0/2 Start Game</button>
-    
-    <div id="playerLobby"></div>
-
+        
+    </body>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script  type="text/javascript" src="/js/scripts.js"></script>
-</body>
+<script  type="text/javascript" src="/js/scripts.js"></script>
 
 </html>
