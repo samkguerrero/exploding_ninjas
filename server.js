@@ -110,7 +110,10 @@ io.on('connection', function (socket) {
         for (var i = 0; i < playersMinus1; i++) {
             deck.push(explodingNinja)
         }
+        console.log("before shuffle", deck)
         shuffle(deck)
+        console.log("after shuffle", deck)
+
         whosTurn = turns.first();
         turnManager(whosTurn)
         gameBoardStart = {
@@ -125,27 +128,31 @@ io.on('connection', function (socket) {
     })
     
     socket.on('playerDead', function(data) {
+        io.emit("announceDead", players[data])
         turns.delete(players[data])
         delete players[socket.id]
         console.log("turns")
         console.log(turns)
     })
     socket.on('updatePlayerWhoDrew', function(data) {
-        players[data.player].hand.push(data.card)
-        io.emit('updatePlayers', players);
+        if(players[data.player])
+        {
+            players[data.player].hand.push(data.card)
+            io.emit('updatePlayers', players);
+        }
     })
 
     socket.on('turnEnded', function(data){
         if(turns.size() === 1) {
             console.log('someone has won')
-            socket.emit('someoneWon')
+            io.emit('someoneWon', turns.first())       
             return
         }
         turns.add(turns.remove())
         whosTurn = turns.first()
         turnManager(whosTurn)
     })
-
+    ////
     socket.on('newLocationForExplode',function(howManyDown){
         io.emit('addExplosion',howManyDown);
         socket.emit('addExplosion',howManyDown);
