@@ -127,14 +127,14 @@ $(document).ready(function() {
   socket.on("someoneWon", function(winnerPlayer) {
     $(".blur").css("filter", "blur(4.5px)");
     $("#action").show();
-    $(".winner").html(winnerPlayer.name + " is new Prescott 2.0 -- WINNER!!!");
+    $(".winner").html(winnerPlayer.name + " WIN!");
     socket.emit("startGame");
   });
 
   socket.on("announceDead", function(deadPlayer) {
     $(".blur").css("filter", "blur(4.5px)");
     $("#action").show();
-    $(".loser").html(deadPlayer.name + " has been EXPLODED!!!");
+    $(".loser").html(deadPlayer.name + " has been EXPLODED!");
   });
 
   socket.on("deletedPlayer", function(data) {
@@ -315,7 +315,7 @@ $(document).ready(function() {
         $("#action").show();
         $(".loserStatus").html(
           localPlayer.name +
-            " has drawn Exploding Ninja! He doesn't have any more defuses."
+            " has drawn Exploding Ninja and doesn't have any more defuses."
         );
 
         localPlayer.isTurn = false;
@@ -391,8 +391,7 @@ $(document).ready(function() {
     } else {
       $(".blur").css("filter", "blur(4.5px)");
       $("#action").show();
-      $(".turnStatus").html("Not Your Turn!!");
-      console.log("Not your turn.");
+      $(".turnStatus").html("It is not your turn!");
     }
   });
 
@@ -498,8 +497,7 @@ $(document).ready(function() {
     } else {
       $(".blur").css("filter", "blur(4.5px)");
       $("#action").show();
-      $(".turnStatus").html("Calm down not ur turn.");
-      console.log("Calm down not ur turn.");
+      $(".turnStatus").html("Calm down, it is not your turn!");
     }
   });
 });
