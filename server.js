@@ -152,6 +152,11 @@ socket.emit("playersCount", players);
     delete players[socket.id];
     console.log("turns");
     console.log(turns);
+    if (turns.size() === 1) {
+        console.log("someone has won");
+        io.emit("someoneWon", turns.first());
+        return;
+    }
   });
   socket.on("updatePlayerWhoDrew", function(data) {
     if (players[data.player]) {

@@ -309,3 +309,6 @@ hr {
     border-radius: 20px;
     z-index: 666;
 }
+#resetGame{
+    display: none;
+}

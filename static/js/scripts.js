@@ -10,6 +10,7 @@ $(document).ready(function() {
   var attackCount = 0;
   var seeFuture = "";
   var usedCards = [];
+  var isExploded = false;
 
   $("#resetGame").hide();
   $("#deck").hide();
@@ -30,6 +31,7 @@ $(document).ready(function() {
   $("#close").click(() => {
     $("#action").hide();
     $(".blur").css("filter", "blur(0px)");
+    $(".turnStatus").html(" ");
   });
 
   socket.on("playersCount", function(allPlayers) {
@@ -128,7 +130,7 @@ $(document).ready(function() {
     $(".blur").css("filter", "blur(4.5px)");
     $("#action").show();
     $(".winner").html(winnerPlayer.name + " WIN!");
-    socket.emit("startGame");
+    //socket.emit("startGame");
   });
 
   socket.on("announceDead", function(deadPlayer) {
@@ -282,23 +284,31 @@ $(document).ready(function() {
     console.log("how many down", howManyDown);
     socket.emit("newLocationForExplode", howManyDown);
     $("#howManyDown").hide();
+            socket.emit("turnEnded", localPlayer.id);
+            localPlayer.isTurn = false;
+            $("#isMyTurn").html("turn: " + localPlayer.isTurn.toString());
+
+        isExploded = false;
+
     $(".blur").css("filter", "blur(0px)");
   });
 
   $("#deck").click(function() {
-    if (localPlayer.isTurn) {
+    if (localPlayer.isTurn && !isExploded) {
       $(".seeFuture").html(seeFuture);
       $(".turnStatus").html(" ");
       var cardDrawn = deck.pop();
-      if (cardDrawn.id === 200) {
+      if (cardDrawn.id === 200) 
+      {
+          isExploded = true;
         console.log("drew explode");
         socket.emit("updateDeck", deck);
         for (var i in localPlayer.hand) {
           if (localPlayer.hand[i].id === 100) {
             var usedDiffuse = localPlayer.hand.splice(i, 1);
             socket.emit("discard", [usedDiffuse[0], localPlayer.id]);
-            socket.emit("turnEnded", localPlayer.id);
-            localPlayer.isTurn = false;
+            // socket.emit("turnEnded", localPlayer.id);
+            // localPlayer.isTurn = false;
             $("#hand").empty();
             renderHand(localPlayer.hand);
             $(".blur").css("filter", "blur(4.5px)");
@@ -321,6 +331,9 @@ $(document).ready(function() {
         localPlayer.isTurn = false;
         isAttacked = false;
         attackCount = 0;
+        socket.emit("turnEnded", localPlayer.id);
+        localPlayer.isTurn = false;
+        $("#isMyTurn").html("turn: " + localPlayer.isTurn.toString());
         socket.emit("playerDead", localPlayer.id);
       }
       usedCards = [];
@@ -341,10 +354,14 @@ $(document).ready(function() {
           player: localPlayer.id,
           card: cardDrawn
         });
-        socket.emit("turnEnded", localPlayer.id);
-        socket.emit("updateDeck", deck);
-        localPlayer.isTurn = false;
-        $("#isMyTurn").html("turn: " + localPlayer.isTurn.toString());
+            if(!isExploded)
+            {
+                socket.emit("turnEnded", localPlayer.id);
+                socket.emit("updateDeck", deck);
+                localPlayer.isTurn = false;
+                $("#isMyTurn").html("turn: " + localPlayer.isTurn.toString());
+            }
+        
       } else {
         attackCount++;
         localPlayer.hand.push(cardDrawn);
@@ -359,6 +376,7 @@ $(document).ready(function() {
             localPlayer.hand[localPlayer.hand.length - 1].rules +
             '"</p></div>'
         );
+
         socket.emit("updateDeck", deck);
         if (attackCount > 1) {
           socket.emit("turnEnded", localPlayer.id);
@@ -447,7 +465,7 @@ $(document).ready(function() {
   });
 
   $("#hand").on("click", ".card", function(e) {
-    if (localPlayer.isTurn && !isAttacked) {
+    if (localPlayer.isTurn && !isAttacked && !isExploded) {
       for (let i = 0; i <= localPlayer.hand.length; i++) {
         if (
           localPlayer.hand[i].id === parseInt(e.target.parentElement.id) ||
@@ -462,7 +480,9 @@ $(document).ready(function() {
             console.log(usedCards[usedCards.length - 1].name);
             if (
               usedCards[usedCards.length - 1].name ===
-              usedCards[usedCards.length - 2].name
+              usedCards[usedCards.length - 2].name 
+              && usedCards[usedCards.length - 1].name != "Attack" 
+              && usedCards[usedCards.length - 1].name != "Attack "
             ) {
               pickingRandom = true;
             }
@@ -482,6 +502,7 @@ $(document).ready(function() {
             console.log("Next three cards are: ", seeFuture);
             $(".blur").css("filter", "blur(4.5px)");
             $("#action").show();
+            $(".seeFuture").html("");
             $(".seeFuture").html("Next three cards are: " + seeFuture);
             seeFuture = "";
           } else if (localPlayer.hand[i].name === "Shuffle the draw") {
@@ -494,7 +515,14 @@ $(document).ready(function() {
           break;
         }
       }
-    } else {
+    } 
+    else if(localPlayer.isTurn && isAttacked)
+    {
+        $(".blur").css("filter", "blur(4.5px)");
+        $("#action").show();
+        $(".turnStatus").html("You have been attacked, you need to draw two cards!"); 
+    }
+    else {
       $(".blur").css("filter", "blur(4.5px)");
       $("#action").show();
       $(".turnStatus").html("Calm down, it is not your turn!");
